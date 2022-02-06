@@ -18,4 +18,26 @@ jobs:
         run: docker build --build-arg PORT_ARG=3001 -t ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME} .
 
       - name: Push image
+      # docker pull ghcr.io/nbutenko/ci-cd:main 
+      # GITHUB_REPOSITORY - ci-cd 
+      # GITHUB_REF_NAME - main 
         run: docker push ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}
+  Lint:
+    runs-on: ubuntu-latest
+    needs: [Build]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Node.js dependencies
+        run: npm install eslint
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
