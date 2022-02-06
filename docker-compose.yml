@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PGHOST: ${PGHOST}
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+    env_file:
+      - .env
+    ports:
+      - "3300:3300"
+    depends_on:
+      - psql
+    restart: always
+
+  psql:
+    image: postgres:latest
+    env_file:
+      - .env
+    ports:
+      - ${PGPORT}:5432
+    container_name: psql
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
+    volumes:
+      - ./psql-db-data:/var/lib/postgresql/data
